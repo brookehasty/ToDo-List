@@ -163,3 +163,13 @@ body {
     background: #fee2e2;
     color: #dc2626;
 }
+
+.task-item {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
