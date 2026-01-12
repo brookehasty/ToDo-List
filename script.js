@@ -1,22 +1,120 @@
-const taskCard = `
+let tasks = []
+let editingId = null
+
+function loadData() {
+    const saved = localStorage.getItem('brooke')
+    if (saved) tasks = JSON.parse(saved);
+    else    
+    tasks = [
+    {
+        id: 1,
+        title: 'Evaluate the addition and deletion of user IDs',
+        status: 'pending',
+        priority: 'minor',
+        completed: false,
+    },
+    {
+        id: 2,
+        title: 'Identity the implemation team',
+        status: 'progress',
+        priority: 'normal',
+        completed: false,
+    },
+    {
+        id: 3,
+        title: 'Batch schedule download/process',
+        status: 'pending',
+        priority: 'critical',
+        completed: false,
+    },
+    {
+        id: 4,
+        title: 'Monitor system performance and adjust hardware',
+        status: 'pending',
+        priority: 'minor',
+        completed: false,
+    }];
+    updateGreeting()
+    renderTasks()
+    
+}
+
+function updateGreeting() {
+    const hour = new Date().getHours();
+    let greet = "Good Morning"
+
+    if (hour >= 12 && hour < 18) greet = "Good Afternoon"
+    else if (hour >= 18) greet = "Good Evening";
+    document.getElementById("greeting").textContent = `${greet}, Brooke`
+}
+
+function saveData() {
+    localStorage.setItem("brooke", JSON.stringify(tasks))
+}
+
+function renderTasks() {
+    const onHold = tasks.filter((t) => !t.completed)
+    const completed = tasks.filter((t) => t.completed)
+
+    document.getElementById("onHoldTasks").innerHTML = onHold.length ? onHold.map((t) => `
+    <div class="task-item">
+    <div class="task-checkbox ${t.completed ? "completed" : ""}" onclick="toggleTask(${t.id})"></div>
+    <div class="task-content">
+        <div class="task-title ${t.completed ? "completed" : ""}">${t.title}</div>
+    </div>
+    <span class="status-badge status-${t.status}">${
+        t.status === "progress" 
+        ? "In Progress" 
+        : t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span>
+    <div class="priority-badge priority-${t.priority}">
+        <i class="fas fa-circle"></i> ${t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
+    </div>
+
+    <div class="avatar">CF</div>
+
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask()">
+        <i class="fas fa-pen" style="font-size: 12px;"></i>
+    </button>
+
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask()">
+        <i class="fas fa-trash" style="font-size: 12px;"></i>
+    </button>
+</div>`).join("") : '<p style="color: #9ca3af; padding: 20px;">No task on hold</p>';
+    
+document.getElementById("completed").innerHTML = completed.length ? completed.map((t) => `
 <div class="task-item">
-                            <div class="task-checkbox" onclick="toggleTask()"></div>
-                            <div class="task-content">
-                                <div class="task-title">Cooking Something</div>
-                            </div>
-                            <span class="status-badge status-something"></span>
-                            <div class="priority-badge priority-something">
-                                <i class="fas fa-circle"></i>
-                            </div>
+    <div class="task-checkbox completed" onclick="toggleTask(${t.id})"></div>
+    <div class="task-content">
+        <div class="task-title completed">${t.title}</div>
+    </div>
+    <span class="status-badge status-completed">Completed</span>
+    <div class="priority-badge priority-${t.priority}">
+        <i class="fas fa-circle"></i> ${t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
+    </div>
 
-                            <div class="avatar">CF</div>
+    <div class="avatar">CF</div>
 
-                            <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask()">
-                                <i class="fas fa-pen" style="font-size: 12px;"></i>
-                            </button>
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask()">
+        <i class="fas fa-pen" style="font-size: 12px;"></i>
+    </button>
 
-                            <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask()">
-                                <i class="fas fa-trash" style="font-size: 12px;"></i>
-                            </button>
-                        </div>
-`
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask()">
+        <i class="fas fa-trash" style="font-size: 12px;"></i>
+    </button>
+</div>`).join("") : '<p style="color: #9ca3af; padding: 20px;">No completed tasks</p>';
+
+const total = tasks.length
+const completedCount = tasks.filter((t) => t.completed).length
+const pending = total - completedCount
+const rate = total ? Math.round((completedCount / total) * 100) : 0
+
+document.getElementById("taskCount").textContent = pending
+document.getElementById("taskTasks").textContent = total
+document.getElementById("completedCount").textContent = completedCount
+document.getElementById("pendingCount").textContent = pending
+document.getElementById("completionRateValue").textContent = rate + '%'
+document.getElementById("totalProgress").style.width = rate + '%'
+document.getElementById("completionProgress").style.width = rate + '%'
+
+saveData()
+}
