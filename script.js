@@ -118,4 +118,74 @@ document.getElementById("totalTasks").textContent = total;
 document.getElementById("completedCount").textContent = completedCount;
 document.getElementById("pendingCount").textContent = pending;
 document.getElementById("completionRateValue").textContent = rate + '%';
-document.getElementByI
+document.getElementById("totalProgress").style.width = rate + '%';
+document.getElementById("completionProgress").style.width = rate + '%';
+
+saveData();
+}
+
+function toggleTask(id) {
+    const t = tasks.find((t) => t.id === id);
+    if (t) {
+        t.completed = !t.completed;
+        t.status = t.completed ? "completed" : "pending";
+        renderTasks();
+    }
+}
+
+function deleteTask(id) {
+    if (confirm("Are you sure you want to delete this task")) {
+        tasks = tasks.filter((t) => t.id !== id);
+        renderTasks();
+    }
+}
+
+function openModal() {
+    document.getElementById("taskModal").classList.add("active");
+}
+
+function closeModal() {
+    document.getElementById("taskModal").classList.remove("active");
+    document.getElementById('taskForm').reset();
+    editingId = null;
+}
+
+document.getElementById("taskForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById(("taskTitle")).value;
+    const status = document.getElementById(("taskStatus")).value;
+    const priority = document.getElementById(("taskPriority")).value;
+
+    if (editingId) {
+        const t = tasks.find((t) => t.id === editingId);
+        t.title = title;
+        t.status = status;
+        t.priority = priority;
+        t.completed = status === 'completed';
+    }else {
+        tasks.push({
+            id: Date.now(),
+            title,
+            status,
+            priority,
+            completed: status == "completed",
+        });
+    }
+
+    renderTasks();
+    closeModal();
+});
+
+function editTask(id) {
+    editingId = id;
+    const t = tasks.find((t) => t.id === id);
+    if (t) {
+        document.getElementById('taskTitle').value = t.title;
+        document.getElementById('taskStatus').value = t.status;
+        document.getElementById('taskPriority').value = t.priority;
+        openModal();
+    }
+}
+
+loadData();
