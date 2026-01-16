@@ -2,6 +2,7 @@ let tasks = []
 let editingId = null
 
 function loadData() {
+    // sample data
     const saved = localStorage.getItem('brooke')
     if (saved) tasks = JSON.parse(saved);
     else    
@@ -33,29 +34,31 @@ function loadData() {
         status: 'pending',
         priority: 'minor',
         completed: false,
-    }];
-    updateGreeting()
-    renderTasks()
+    },];
+    updateGreeting();
+    renderTasks();
     
 }
 
 function updateGreeting() {
+    // Greets user based off users' time
     const hour = new Date().getHours();
-    let greet = "Good Morning"
+    let greet = "Good Morning";
 
-    if (hour >= 12 && hour < 18) greet = "Good Afternoon"
+    if (hour >= 12 && hour < 18) greet = "Good Afternoon";
     else if (hour >= 18) greet = "Good Evening";
-    document.getElementById("greeting").textContent = `${greet}, Brooke`
+    document.getElementById("greeting").textContent = `${greet}, Brooke`;
 }
 
 function saveData() {
-    localStorage.setItem("brooke", JSON.stringify(tasks))
+    localStorage.setItem("brooke", JSON.stringify(tasks));
 }
 
 function renderTasks() {
-    const onHold = tasks.filter((t) => !t.completed)
-    const completed = tasks.filter((t) => t.completed)
+    const onHold = tasks.filter((t) => !t.completed);
+    const completed = tasks.filter((t) => t.completed);
 
+    // Render on hold tasks
     document.getElementById("onHoldTasks").innerHTML = onHold.length ? onHold.map((t) => `
     <div class="task-item">
     <div class="task-checkbox ${t.completed ? "completed" : ""}" onclick="toggleTask(${t.id})"></div>
@@ -72,15 +75,16 @@ function renderTasks() {
 
     <div class="avatar">CF</div>
 
-    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask()">
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask(${t.id})">
         <i class="fas fa-pen" style="font-size: 12px;"></i>
     </button>
 
-    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask()">
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask(${t.id})">
         <i class="fas fa-trash" style="font-size: 12px;"></i>
     </button>
 </div>`).join("") : '<p style="color: #9ca3af; padding: 20px;">No task on hold</p>';
-    
+
+// Reder completed tasks    
 document.getElementById("completed").innerHTML = completed.length ? completed.map((t) => `
 <div class="task-item">
     <div class="task-checkbox completed" onclick="toggleTask(${t.id})"></div>
@@ -94,27 +98,24 @@ document.getElementById("completed").innerHTML = completed.length ? completed.ma
 
     <div class="avatar">CF</div>
 
-    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask()">
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="editTask(${t.id})">
         <i class="fas fa-pen" style="font-size: 12px;"></i>
     </button>
 
-    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask()">
+    <button class="icon-btn" style="width: 30px; height: 30px;" onclick="deleteTask(${t.id})">
         <i class="fas fa-trash" style="font-size: 12px;"></i>
     </button>
 </div>`).join("") : '<p style="color: #9ca3af; padding: 20px;">No completed tasks</p>';
 
-const total = tasks.length
-const completedCount = tasks.filter((t) => t.completed).length
-const pending = total - completedCount
-const rate = total ? Math.round((completedCount / total) * 100) : 0
+// Update sidebar tasks
+const total = tasks.length;
+const completedCount = tasks.filter((t) => t.completed).length;
+const pending = total - completedCount;
+const rate = total ? Math.round((completedCount / total) * 100) : 0;
 
-document.getElementById("taskCount").textContent = pending
-document.getElementById("taskTasks").textContent = total
-document.getElementById("completedCount").textContent = completedCount
-document.getElementById("pendingCount").textContent = pending
-document.getElementById("completionRateValue").textContent = rate + '%'
-document.getElementById("totalProgress").style.width = rate + '%'
-document.getElementById("completionProgress").style.width = rate + '%'
-
-saveData()
-}
+document.getElementById("taskCount").textContent = pending;
+document.getElementById("totalTasks").textContent = total;
+document.getElementById("completedCount").textContent = completedCount;
+document.getElementById("pendingCount").textContent = pending;
+document.getElementById("completionRateValue").textContent = rate + '%';
+document.getElementByI
